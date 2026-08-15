@@ -6,11 +6,10 @@ import '../../features/auth/presentation/auth_routes.dart';
 import '../../features/auth/providers/auth_provider.dart';
 // import '../../features/offers/presentation/offers_routes.dart';
 // import '../../features/applications/presentation/applications_routes.dart';
-// import '../../features/contracts_payments/presentation/contracts_payments_routes.dart';
+import '../../features/contracts_payments/presentation/contracts_payments_routes.dart';
 import '../../features/content/presentation/content_routes.dart';
 import '../../features/applications/presentation/applications_routes.dart';
 import '../../features/offers/presentation/offers_routes.dart';
-
 
 const _publicRoutes = {'/login', '/register', '/forgot-password'};
 
@@ -20,13 +19,9 @@ const _publicRoutes = {'/login', '/register', '/forgot-password'};
 ///
 ///
 final GoRouter appRouter = GoRouter(
-
   initialLocation: '/login',
 
-  routes: [
-    ...authRoutes,
-    ...offersRoutes,
-  ],
+  routes: [...authRoutes, ...offersRoutes],
 );
 
 GoRouter buildAppRouter(AuthProvider authProvider) {
@@ -38,9 +33,9 @@ GoRouter buildAppRouter(AuthProvider authProvider) {
     routes: [
       ...authRoutes,
       ...offersRoutes,
-     ...applicationsRoutes,
-      // ...contractsPaymentsRoutes,
-       ...contentRoutes,
+      ...applicationsRoutes,
+      ...contractsPaymentsRoutes,
+      ...contentRoutes,
     ],
   );
 }
@@ -62,7 +57,9 @@ String? _handleRedirect(AuthProvider authProvider, GoRouterState state) {
     return '/complete-profile';
   }
 
-  if (hasToken && profileCompleted && (location == '/login' || location == '/register')) {
+  if (hasToken &&
+      profileCompleted &&
+      (location == '/login' || location == '/register')) {
     return '/home';
   }
 
@@ -97,7 +94,11 @@ class _HomePlaceholderScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
+              const Icon(
+                Icons.check_circle_outline,
+                size: 64,
+                color: Colors.green,
+              ),
               const SizedBox(height: 16),
               Text(
                 '¡Bienvenido, $displayName!',
