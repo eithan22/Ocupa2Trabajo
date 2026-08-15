@@ -17,6 +17,18 @@ const _publicRoutes = {'/login', '/register', '/forgot-password'};
 /// Construye el GoRouter de la app. Solo importa y concatena listas de
 /// rutas por módulo con `...`; cada módulo agrega su propia lista aquí
 /// cuando esté listo (spreads comentados abajo).
+///
+///
+final GoRouter appRouter = GoRouter(
+
+  initialLocation: '/login',
+
+  routes: [
+    ...authRoutes,
+    ...offersRoutes,
+  ],
+);
+
 GoRouter buildAppRouter(AuthProvider authProvider) {
   return GoRouter(
     initialLocation: '/login',

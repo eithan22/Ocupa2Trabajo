@@ -4,7 +4,7 @@ import '../../../models/job_type_model.dart';
 import '../../../models/offer_model.dart';
 
 class OffersRepository {
-  final Dio _dio = DioClient.instance as Dio;
+  final Dio _dio = DioClient.instance.dio;
 
 
   Future<List<JobTypeModel>> getJobTypes() async {
