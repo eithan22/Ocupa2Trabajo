@@ -9,6 +9,9 @@ import '../../features/auth/providers/auth_provider.dart';
 // import '../../features/contracts_payments/presentation/contracts_payments_routes.dart';
 import '../../features/content/presentation/content_routes.dart';
 
+import '../../features/offers/presentation/offers_routes.dart';
+
+
 const _publicRoutes = {'/login', '/register', '/forgot-password'};
 
 /// Construye el GoRouter de la app. Solo importa y concatena listas de
@@ -22,7 +25,7 @@ GoRouter buildAppRouter(AuthProvider authProvider) {
 
     routes: [
       ...authRoutes,
-      // ...offersRoutes,
+      ...offersRoutes,
       // ...applicationsRoutes,
       // ...contractsPaymentsRoutes,
        ...contentRoutes,
