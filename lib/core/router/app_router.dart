@@ -8,7 +8,7 @@ import '../../features/auth/providers/auth_provider.dart';
 // import '../../features/applications/presentation/applications_routes.dart';
 // import '../../features/contracts_payments/presentation/contracts_payments_routes.dart';
 import '../../features/content/presentation/content_routes.dart';
-
+import '../../features/applications/presentation/applications_routes.dart';
 import '../../features/offers/presentation/offers_routes.dart';
 
 
@@ -38,7 +38,7 @@ GoRouter buildAppRouter(AuthProvider authProvider) {
     routes: [
       ...authRoutes,
       ...offersRoutes,
-      // ...applicationsRoutes,
+     ...applicationsRoutes,
       // ...contractsPaymentsRoutes,
        ...contentRoutes,
     ],

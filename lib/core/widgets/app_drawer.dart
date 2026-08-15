@@ -39,6 +39,22 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Acerca de'),
               onTap: () => _goTo(context, '/about'),
             ),
+            // 👤 Persona 3 — módulo Aplicaciones & Experiencias
+            ListTile(
+              leading: const Icon(Icons.assignment_outlined),
+              title: const Text('Mis aplicaciones'),
+              onTap: () => _goTo(context, '/my-applications'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.work_history_outlined),
+              title: const Text('Mis experiencias'),
+              onTap: () => _goTo(context, '/my-experiences'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.favorite_border),
+              title: const Text('Me gusta'),
+              onTap: () => _goTo(context, '/liked-offers'),
+            ),
             // Cada módulo agrega su propia entrada aquí cuando su ruta exista.
             const Divider(),
             ListTile(
