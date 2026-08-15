@@ -23,10 +23,19 @@ class _VideosScreenState extends State<VideosScreen> {
     });
   }
 
+  // Intenta abrir directo, en vez de preguntar primero con canLaunchUrl
+  // (en Android 11+ esa pregunta suele devolver "no" aunque sí se pueda
+  // abrir, si el manifiesto no declara los <queries> correspondientes).
+  // Si falla de verdad, muestra un aviso en vez de quedarse en silencio.
   Future<void> _openVideo(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    try {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir el video.')),
+        );
+      }
     }
   }
 
