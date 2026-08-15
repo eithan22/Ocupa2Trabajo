@@ -9,11 +9,26 @@ import '../../features/auth/providers/auth_provider.dart';
 // import '../../features/contracts_payments/presentation/contracts_payments_routes.dart';
 import '../../features/content/presentation/content_routes.dart';
 
+import '../../features/offers/presentation/offers_routes.dart';
+
+
 const _publicRoutes = {'/login', '/register', '/forgot-password'};
 
 /// Construye el GoRouter de la app. Solo importa y concatena listas de
 /// rutas por módulo con `...`; cada módulo agrega su propia lista aquí
 /// cuando esté listo (spreads comentados abajo).
+///
+///
+final GoRouter appRouter = GoRouter(
+
+  initialLocation: '/login',
+
+  routes: [
+    ...authRoutes,
+    ...offersRoutes,
+  ],
+);
+
 GoRouter buildAppRouter(AuthProvider authProvider) {
   return GoRouter(
     initialLocation: '/login',
@@ -22,7 +37,7 @@ GoRouter buildAppRouter(AuthProvider authProvider) {
 
     routes: [
       ...authRoutes,
-      // ...offersRoutes,
+      ...offersRoutes,
       // ...applicationsRoutes,
       // ...contractsPaymentsRoutes,
        ...contentRoutes,
