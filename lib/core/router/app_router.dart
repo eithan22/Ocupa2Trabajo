@@ -7,7 +7,7 @@ import '../../features/auth/providers/auth_provider.dart';
 // import '../../features/offers/presentation/offers_routes.dart';
 // import '../../features/applications/presentation/applications_routes.dart';
 // import '../../features/contracts_payments/presentation/contracts_payments_routes.dart';
-// import '../../features/content/presentation/content_routes.dart';
+import '../../features/content/presentation/content_routes.dart';
 
 const _publicRoutes = {'/login', '/register', '/forgot-password'};
 
@@ -19,13 +19,13 @@ GoRouter buildAppRouter(AuthProvider authProvider) {
     initialLocation: '/login',
     refreshListenable: authProvider,
     redirect: (context, state) => _handleRedirect(authProvider, state),
+
     routes: [
-      GoRoute(path: '/home', builder: (context, state) => const _HomePlaceholderScreen()),
       ...authRoutes,
       // ...offersRoutes,
       // ...applicationsRoutes,
       // ...contractsPaymentsRoutes,
-      // ...contentRoutes,
+       ...contentRoutes,
     ],
   );
 }

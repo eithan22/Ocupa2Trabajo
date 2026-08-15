@@ -6,6 +6,7 @@ import 'core/network/dio_client.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/content/providers/content_provider.dart';
 
 class OcupaApp extends StatefulWidget {
   const OcupaApp({super.key});
@@ -32,6 +33,7 @@ class _OcupaAppState extends State<OcupaApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>.value(value: _authProvider),
+        ChangeNotifierProvider<ContentProvider>(create: (_) => ContentProvider()),
         // Los demás módulos (P2-P5) agregan aquí sus propios ChangeNotifierProvider.
       ],
       child: Consumer<AuthProvider>(
