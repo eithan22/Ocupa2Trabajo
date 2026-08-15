@@ -7,7 +7,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/content/providers/content_provider.dart';
-
+import 'features/applications/providers/applications_provider.dart';
 import 'features/offers/providers/offers_provider.dart';
 
 class OcupaApp extends StatefulWidget {
@@ -39,6 +39,7 @@ class _OcupaAppState extends State<OcupaApp> {
         // Los demás módulos (P2-P5) agregan aquí sus propios ChangeNotifierProvider.
 
         ChangeNotifierProvider<OffersProvider>(create: (_) => OffersProvider()),
+        ChangeNotifierProvider<ApplicationsProvider>(create: (_) => ApplicationsProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
