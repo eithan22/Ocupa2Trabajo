@@ -46,7 +46,7 @@ class ForumRepository {
     try {
       final response = await _dio.post(
         '/forum/topics',
-        data: {'title': title, 'body': body},
+        data: {'title': title, 'description': body},
       );
       final data = _data(response.data);
       return data is Map
