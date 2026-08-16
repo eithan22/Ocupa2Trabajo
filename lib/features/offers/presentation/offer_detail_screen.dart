@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/offers_provider.dart';
-// import '../../applications/presentation/apply_to_offer_widget.dart'; // TODO: Descomentar cuando la Persona 3 lo tenga listo
+import '../../applications/presentation/apply_to_offer_widget.dart';
 
 class OfferDetailScreen extends StatefulWidget {
   final String offerId;
@@ -131,43 +131,12 @@ class _OfferDetailScreenState extends State<OfferDetailScreen> {
             ),
             const Divider(height: 48, thickness: 1),
 
-            // ZONA DE INTEGRACIÓN: PERSONA 3
             const Text(
               'Postúlate a esta oferta',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
-
-                border: Border.all(color: Colors.grey.shade300, style: BorderStyle.solid),
-              ),
-              child: const Column(
-                children: [
-                  Icon(Icons.extension, size: 40, color: Colors.grey),
-                  SizedBox(height: 8),
-                  Text(
-                    'Espacio reservado para la Persona 3\n(ApplyToOfferWidget)',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Aquí irá el formulario con los comentarios y las preguntas dinámicas.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-
-            // Descomentar cuando el archivo exista:
-            // ApplyToOfferWidget(offerId: offer.id),
+            ApplyToOfferWidget(offerId: offer.id),
 
             const SizedBox(height: 32),
           ],

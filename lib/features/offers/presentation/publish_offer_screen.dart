@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/dynamic_form_field.dart';
 import '../../../models/job_type_model.dart';
 import '../providers/offers_provider.dart';
-// import '../../contracts_payments/presentation/payment_form_widget.dart'; // Componente de la Persona 4
+import '../../contracts_payments/presentation/payment_form_widget.dart';
 // import '../../../core/services/upload_service.dart'; // Componente de la Persona 5
 
 class PublishOfferScreen extends StatefulWidget {
@@ -200,18 +200,14 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                 child: Column(
                   children: [
                     const Text('Pago de Publicación (Persona 4)'),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.payment),
-                      label: const Text('Simular Pago (1 USD)'),
-                      onPressed: () {
-                        // TODO: Mostrar PaymentFormWidget de la Persona 4
+                    const SizedBox(height: 12),
+                    PaymentFormWidget(
+                      onPaymentApproved: (paymentId) {
                         setState(() {
-                          _paymentId = 'pay_12345_mock';
+                          _paymentId = paymentId;
                         });
                       },
                     ),
-                    if (_paymentId != null)
-                      const Text('✅ Pago aprobado', style: TextStyle(color: Colors.green)),
                   ],
                 ),
               ),

@@ -38,8 +38,8 @@ class HomeScreen extends StatelessWidget {
     _ModuleTile(icon: Icons.work_outline, label: 'Mis ofertas', route: null),
     _ModuleTile(icon: Icons.assignment_outlined, label: 'Mis aplicaciones', route: '/my-applications'), 
     _ModuleTile(icon: Icons.badge_outlined, label: 'Mis experiencias', route: '/my-experiences'),       
-    _ModuleTile(icon: Icons.description_outlined, label: 'Mis contratos', route: null),
-    _ModuleTile(icon: Icons.payments_outlined, label: 'Mis pagos', route: null),
+    _ModuleTile(icon: Icons.description_outlined, label: 'Mis contratos', route: '/contracts'),
+    _ModuleTile(icon: Icons.payments_outlined, label: 'Mis pagos', route: '/payments'),
   ];
 
   @override

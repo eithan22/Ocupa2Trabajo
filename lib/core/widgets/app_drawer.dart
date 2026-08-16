@@ -55,6 +55,16 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Me gusta'),
               onTap: () => _goTo(context, '/liked-offers'),
             ),
+            ListTile(
+              leading: const Icon(Icons.description_outlined),
+              title: const Text('Mis contratos'),
+              onTap: () => _goTo(context, '/contracts'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.payments_outlined),
+              title: const Text('Mis pagos'),
+              onTap: () => _goTo(context, '/payments'),
+            ),
             // Cada módulo agrega su propia entrada aquí cuando su ruta exista.
             const Divider(),
             ListTile(
