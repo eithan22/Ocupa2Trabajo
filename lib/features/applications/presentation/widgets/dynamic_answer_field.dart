@@ -38,7 +38,8 @@ class _DynamicAnswerFieldState extends State<DynamicAnswerField> {
     super.dispose();
   }
 
-  String get _label => widget.field.required ? '${widget.field.label} *' : widget.field.label;
+  String get _label =>
+      widget.field.required ? '${widget.field.label} *' : widget.field.label;
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +47,15 @@ class _DynamicAnswerFieldState extends State<DynamicAnswerField> {
       case DynamicFieldType.text:
         return TextFormField(
           controller: _textController,
-          decoration: InputDecoration(labelText: _label, border: const OutlineInputBorder()),
+          decoration: InputDecoration(
+            labelText: _label,
+            border: const OutlineInputBorder(),
+          ),
           onChanged: widget.onChanged,
           validator: widget.field.required
-              ? (v) => (v == null || v.trim().isEmpty) ? 'Este campo es obligatorio' : null
+              ? (v) => (v == null || v.trim().isEmpty)
+                    ? 'Este campo es obligatorio'
+                    : null
               : null,
         );
 
@@ -68,7 +74,10 @@ class _DynamicAnswerFieldState extends State<DynamicAnswerField> {
             }
           },
           child: InputDecorator(
-            decoration: InputDecoration(labelText: _label, border: const OutlineInputBorder()),
+            decoration: InputDecoration(
+              labelText: _label,
+              border: const OutlineInputBorder(),
+            ),
             child: Text(
               _selectedDate != null
                   ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
@@ -79,8 +88,11 @@ class _DynamicAnswerFieldState extends State<DynamicAnswerField> {
 
       case DynamicFieldType.select:
         return DropdownButtonFormField<String>(
-          value: _selectedOption,
-          decoration: InputDecoration(labelText: _label, border: const OutlineInputBorder()),
+          initialValue: _selectedOption,
+          decoration: InputDecoration(
+            labelText: _label,
+            border: const OutlineInputBorder(),
+          ),
           items: widget.field.options
               .map((o) => DropdownMenuItem(value: o, child: Text(o)))
               .toList(),

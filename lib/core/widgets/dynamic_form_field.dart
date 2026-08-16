@@ -16,7 +16,6 @@ class DynamicFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isRequiredLabel = fieldConfig.isRequired ? ' *' : '';
 
     switch (fieldConfig.type.toLowerCase()) {
@@ -24,17 +23,19 @@ class DynamicFormField extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: DropdownButtonFormField<String>(
-            value: initialValue,
+            initialValue: initialValue,
             decoration: InputDecoration(
               labelText: '${fieldConfig.label}$isRequiredLabel',
               border: const OutlineInputBorder(),
             ),
-            items: fieldConfig.options?.map((String option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(option),
-              );
-            }).toList() ?? [],
+            items:
+                fieldConfig.options?.map((String option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList() ??
+                [],
             onChanged: (val) => onChanged(val),
             validator: fieldConfig.isRequired
                 ? (value) => value == null || value.isEmpty ? 'Requerido' : null
@@ -61,7 +62,9 @@ class DynamicFormField extends StatelessWidget {
             readOnly: true,
             controller: TextEditingController(
               text: initialValue != null
-                  ? DateFormat('yyyy-MM-dd').format(DateTime.parse(initialValue))
+                  ? DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(DateTime.parse(initialValue))
                   : '',
             ),
             decoration: InputDecoration(
@@ -98,7 +101,8 @@ class DynamicFormField extends StatelessWidget {
             ),
             onChanged: onChanged,
             validator: fieldConfig.isRequired
-                ? (value) => value == null || value.trim().isEmpty ? 'Requerido' : null
+                ? (value) =>
+                      value == null || value.trim().isEmpty ? 'Requerido' : null
                 : null,
           ),
         );

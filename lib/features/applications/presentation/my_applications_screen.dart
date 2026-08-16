@@ -103,21 +103,29 @@ class _ApplicationCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      application.offerTitle ?? 'Oferta #${application.offerId}',
+                      application.offerTitle ??
+                          'Oferta #${application.offerId}',
                       style: Theme.of(context).textTheme.titleMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       application.status.label,
-                      style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12),
+                      style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],
@@ -165,7 +173,11 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(icon, size: 48, color: Colors.grey),
             const SizedBox(height: 12),
-            Text(message, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey),
+            ),
           ],
         ),
       ),

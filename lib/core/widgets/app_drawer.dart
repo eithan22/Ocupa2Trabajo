@@ -15,7 +15,10 @@ class AppDrawer extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              child: Text('Ocupa2', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Ocupa2',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.home_outlined),
@@ -32,6 +35,11 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.ondemand_video_outlined),
               title: const Text('Videos'),
               onTap: () => _goTo(context, '/videos'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.forum_outlined),
+              title: const Text('Foro'),
+              onTap: () => _goTo(context, '/forum'),
             ),
 
             ListTile(

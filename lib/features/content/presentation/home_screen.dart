@@ -29,17 +29,58 @@ class HomeScreen extends StatelessWidget {
   // Accesos a los módulos de la app.
 
   static const List<_ModuleTile> _modules = [
-    _ModuleTile(icon: Icons.article_outlined, label: 'Noticias', route: '/news'),
-    _ModuleTile(icon: Icons.ondemand_video_outlined, label: 'Videos', route: '/videos'),
+    _ModuleTile(
+      icon: Icons.article_outlined,
+      label: 'Noticias',
+      route: '/news',
+    ),
+    _ModuleTile(
+      icon: Icons.ondemand_video_outlined,
+      label: 'Videos',
+      route: '/videos',
+    ),
+    _ModuleTile(icon: Icons.forum_outlined, label: 'Foro', route: '/forum'),
     _ModuleTile(icon: Icons.info_outline, label: 'Acerca de', route: '/about'),
-    _ModuleTile(icon: Icons.explore_outlined, label: 'Explorar ofertas', route: '/explore-offers'),
-    _ModuleTile(icon: Icons.map_outlined, label: 'Mapa de ofertas', route: '/offers-map'),
-    _ModuleTile(icon: Icons.campaign_outlined, label: 'Publicar oferta', route: '/publish-offer'),
-    _ModuleTile(icon: Icons.work_outline, label: 'Mis ofertas', route: '/my-offers'),
-    _ModuleTile(icon: Icons.assignment_outlined, label: 'Mis aplicaciones', route: '/my-applications'), 
-    _ModuleTile(icon: Icons.badge_outlined, label: 'Mis experiencias', route: '/my-experiences'),       
-    _ModuleTile(icon: Icons.description_outlined, label: 'Mis contratos', route: '/contracts'),
-    _ModuleTile(icon: Icons.payments_outlined, label: 'Mis pagos', route: '/payments'),
+    _ModuleTile(
+      icon: Icons.explore_outlined,
+      label: 'Explorar ofertas',
+      route: '/explore-offers',
+    ),
+    _ModuleTile(
+      icon: Icons.map_outlined,
+      label: 'Mapa de ofertas',
+      route: '/offers-map',
+    ),
+    _ModuleTile(
+      icon: Icons.campaign_outlined,
+      label: 'Publicar oferta',
+      route: '/publish-offer',
+    ),
+    _ModuleTile(
+      icon: Icons.work_outline,
+      label: 'Mis ofertas',
+      route: '/my-offers',
+    ),
+    _ModuleTile(
+      icon: Icons.assignment_outlined,
+      label: 'Mis aplicaciones',
+      route: '/my-applications',
+    ),
+    _ModuleTile(
+      icon: Icons.badge_outlined,
+      label: 'Mis experiencias',
+      route: '/my-experiences',
+    ),
+    _ModuleTile(
+      icon: Icons.description_outlined,
+      label: 'Mis contratos',
+      route: '/contracts',
+    ),
+    _ModuleTile(
+      icon: Icons.payments_outlined,
+      label: 'Mis pagos',
+      route: '/payments',
+    ),
   ];
 
   @override
@@ -55,18 +96,20 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               // --- Carrusel de bienvenida,
               FlutterCarousel(
                 options: FlutterCarouselOptions(
                   height: carouselHeight,
-                  viewportFraction: 1, // 1 slide llena toda la pantalla, sin ver el borde del siguiente
+                  viewportFraction:
+                      1, // 1 slide llena toda la pantalla, sin ver el borde del siguiente
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 4),
                   showIndicator: true,
                   slideIndicator: CircularSlideIndicator(),
                 ),
-                items: _slides.map((slide) => _SlideCard(slide: slide)).toList(),
+                items: _slides
+                    .map((slide) => _SlideCard(slide: slide))
+                    .toList(),
               ),
 
               const SizedBox(height: 24),
@@ -81,14 +124,15 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 28),
 
-
-
               //  Accesos a los módulos de la app
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Explora la app', style: Theme.of(context).textTheme.titleMedium),
+                  child: Text(
+                    'Explora la app',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -101,7 +145,9 @@ class HomeScreen extends StatelessWidget {
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
                   childAspectRatio: 1.3,
-                  children: _modules.map((module) => _ModuleCard(module: module)).toList(),
+                  children: _modules
+                      .map((module) => _ModuleCard(module: module))
+                      .toList(),
                 ),
               ),
 
@@ -114,12 +160,14 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-
 // Datos y widget de cada tarjeta del carrusel
 
-
 class _SlideData {
-  const _SlideData({required this.image, required this.title, required this.subtitle});
+  const _SlideData({
+    required this.image,
+    required this.title,
+    required this.subtitle,
+  });
   final String image;
   final String title;
   final String subtitle;
@@ -160,7 +208,11 @@ class _SlideCard extends StatelessWidget {
           children: [
             Text(
               slide.title,
-              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -174,9 +226,7 @@ class _SlideCard extends StatelessWidget {
   }
 }
 
-
 // Datos y widget de cada tarjeta de módulo
-
 
 class _ModuleTile {
   const _ModuleTile({required this.icon, required this.label, this.route});
@@ -196,15 +246,17 @@ class _ModuleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: _isReady ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
+      color: _isReady
+          ? null
+          : Theme.of(context).colorScheme.surfaceContainerHighest,
       child: InkWell(
         onTap: () {
           if (_isReady) {
             context.push(module.route!);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Próximamente')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Próximamente')));
           }
         },
         child: Padding(
@@ -215,17 +267,25 @@ class _ModuleCard extends StatelessWidget {
               Icon(
                 module.icon,
                 size: 32,
-                color: _isReady ? Theme.of(context).colorScheme.primary : Colors.grey,
+                color: _isReady
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey,
               ),
               const SizedBox(height: 8),
               Text(
                 module.label,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: _isReady ? null : Colors.grey),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: _isReady ? null : Colors.grey,
+                ),
               ),
               if (!_isReady) ...[
                 const SizedBox(height: 4),
-                Text('Próximamente', style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
+                Text(
+                  'Próximamente',
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                ),
               ],
             ],
           ),

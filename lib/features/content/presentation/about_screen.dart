@@ -78,7 +78,6 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: _team.length,
 
-
         separatorBuilder: (_, __) => const SizedBox(height: 20),
         itemBuilder: (context, index) {
           final member = _team[index];
@@ -89,7 +88,10 @@ class AboutScreen extends StatelessWidget {
                 radius: 28,
                 backgroundImage: AssetImage(member.photo),
               ),
-              title: Text(member.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+              title: Text(
+                member.name,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -102,12 +104,11 @@ class AboutScreen extends StatelessWidget {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
-                  if (member.phone != null)
+                  if (member.phone.isNotEmpty)
                     IconButton(
                       icon: const Icon(Icons.phone_outlined),
                       tooltip: 'Llamar',
-                      onPressed: () => _call(member.phone!),
+                      onPressed: () => _call(member.phone),
                     ),
                   IconButton(
                     icon: const Icon(Icons.send_outlined),
