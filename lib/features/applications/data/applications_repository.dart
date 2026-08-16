@@ -32,10 +32,15 @@ class ApplicationsRepository {
     try {
       final response = await _dio.get('/me/experiences');
       final data = response.data;
-      final list = data is List ? data : (data['data'] ?? data['experiences'] ?? []);
-      return List<ExperienceModel>.from(
-        list.map((e) => ExperienceModel.fromJson(e)),
-      );
+      final list = data is List
+          ? data
+          : data is Map
+          ? (data['data'] ?? data['experiences'] ?? [])
+          : [];
+      return list
+          .whereType<Map>()
+          .map((e) => ExperienceModel.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
@@ -58,18 +63,32 @@ class ApplicationsRepository {
         certificateUrl = await _uploadService.uploadImage(certificateFile);
       }
 
-      final response = await _dio.post('/me/experiences', data: {
-        'title': title,
-        if (company != null) 'company': company,
-        if (description != null) 'description': description,
-        if (startDate != null) 'startDate': startDate.toIso8601String(),
-        if (endDate != null) 'endDate': endDate.toIso8601String(),
-        if (certificateUrl != null) 'certificateUrl': certificateUrl,
-      });
-      return ExperienceModel.fromJson(response.data);
+      final response = await _dio.post(
+        '/me/experiences',
+        data: {
+          'title': title,
+          if (company != null) 'company': company,
+          if (description != null) 'description': description,
+          if (startDate != null) 'startDate': startDate.toIso8601String(),
+          if (endDate != null) 'endDate': endDate.toIso8601String(),
+          if (certificateUrl != null) 'certificateUrl': certificateUrl,
+        },
+      );
+      final data = _unwrapData(response.data);
+      if (data is! Map) {
+        throw ApiException('La experiencia creada no tiene un formato válido.');
+      }
+      return ExperienceModel.fromJson(Map<String, dynamic>.from(data));
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
+  }
+
+  dynamic _unwrapData(dynamic responseData) {
+    if (responseData is Map && responseData['data'] != null) {
+      return responseData['data'];
+    }
+    return responseData;
   }
 
   Future<void> deleteExperience(String experienceId) async {
@@ -90,10 +109,13 @@ class ApplicationsRepository {
     List<DynamicFieldAnswer> answers = const [],
   }) async {
     try {
-      final response = await _dio.post('/offers/$offerId/apply', data: {
-        'comment': comment,
-        'answers': answers.map((a) => a.toJson()).toList(),
-      });
+      final response = await _dio.post(
+        '/offers/$offerId/apply',
+        data: {
+          'comment': comment,
+          'answers': answers.map((a) => a.toJson()).toList(),
+        },
+      );
       return ApplicationModel.fromJson(response.data);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
@@ -108,7 +130,9 @@ class ApplicationsRepository {
     try {
       final response = await _dio.get('/me/applications');
       final data = response.data;
-      final list = data is List ? data : (data['data'] ?? data['applications'] ?? []);
+      final list = data is List
+          ? data
+          : (data['data'] ?? data['applications'] ?? []);
       return List<ApplicationModel>.from(
         list.map((a) => ApplicationModel.fromJson(a)),
       );
@@ -125,7 +149,9 @@ class ApplicationsRepository {
     try {
       final response = await _dio.get('/offers/$offerId/applications');
       final data = response.data;
-      final list = data is List ? data : (data['data'] ?? data['applications'] ?? []);
+      final list = data is List
+          ? data
+          : (data['data'] ?? data['applications'] ?? []);
       return List<ApplicationModel>.from(
         list.map((a) => ApplicationModel.fromJson(a)),
       );
@@ -164,7 +190,10 @@ class ApplicationsRepository {
     Map<String, dynamic> body,
   ) async {
     try {
-      final response = await _dio.patch('/applications/$applicationId', data: body);
+      final response = await _dio.patch(
+        '/applications/$applicationId',
+        data: body,
+      );
       return ApplicationModel.fromJson(response.data);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

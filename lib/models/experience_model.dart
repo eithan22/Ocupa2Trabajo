@@ -26,26 +26,51 @@ class ExperienceModel {
 
   factory ExperienceModel.fromJson(Map<String, dynamic> json) {
     return ExperienceModel(
-      id: (json['id'] ?? '').toString(),
-      title: (json['title'] ?? json['position'] ?? '').toString(),
-      company: json['company'] ?? json['institution'],
-      description: json['description'],
-      startDate: json['startDate'] != null
-          ? DateTime.tryParse(json['startDate'].toString())
-          : null,
-      endDate: json['endDate'] != null
-          ? DateTime.tryParse(json['endDate'].toString())
-          : null,
-      certificateUrl: json['certificateUrl'] ?? json['imageUrl'],
+      id: (json['id'] ?? json['experienceId'] ?? '').toString(),
+      title:
+          (json['title'] ??
+                  json['position'] ??
+                  json['jobTitle'] ??
+                  json['job_title'] ??
+                  '')
+              .toString(),
+      company: _asNullableString(
+        json['company'] ??
+            json['institution'] ??
+            json['companyName'] ??
+            json['company_name'],
+      ),
+      description: _asNullableString(json['description'] ?? json['details']),
+      startDate: _parseDate(
+        json['startDate'] ?? json['start_date'] ?? json['from'],
+      ),
+      endDate: _parseDate(json['endDate'] ?? json['end_date'] ?? json['to']),
+      certificateUrl: _asNullableString(
+        json['certificateUrl'] ??
+            json['certificate_url'] ??
+            json['imageUrl'] ??
+            json['image_url'] ??
+            json['image'],
+      ),
     );
   }
 
+  static DateTime? _parseDate(dynamic value) {
+    return value != null ? DateTime.tryParse(value.toString()) : null;
+  }
+
+  static String? _asNullableString(dynamic value) {
+    if (value == null) return null;
+    final result = value.toString().trim();
+    return result.isEmpty ? null : result;
+  }
+
   Map<String, dynamic> toJson() => {
-        'title': title,
-        if (company != null) 'company': company,
-        if (description != null) 'description': description,
-        if (startDate != null) 'startDate': startDate!.toIso8601String(),
-        if (endDate != null) 'endDate': endDate!.toIso8601String(),
-        if (certificateUrl != null) 'certificateUrl': certificateUrl,
-      };
+    'title': title,
+    if (company != null) 'company': company,
+    if (description != null) 'description': description,
+    if (startDate != null) 'startDate': startDate!.toIso8601String(),
+    if (endDate != null) 'endDate': endDate!.toIso8601String(),
+    if (certificateUrl != null) 'certificateUrl': certificateUrl,
+  };
 }
