@@ -123,6 +123,23 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
       appBar: AppBar(title: const Text('Publicar Oferta')),
       body: provider.isLoading && provider.jobTypes.isEmpty
           ? const Center(child: CircularProgressIndicator())
+          : provider.jobTypes.isEmpty && provider.errorMessage != null
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(provider.errorMessage!, textAlign: TextAlign.center),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: provider.fetchJobTypes,
+                      child: const Text('Reintentar'),
+                    ),
+                  ],
+                ),
+              ),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Form(
