@@ -72,6 +72,7 @@ class ApplicationAnswerModel {
 class ApplicationModel {
   final String id;
   final String offerId;
+  final String? contractId;
   final String? offerTitle;
   final String? applicantId;
   final String? applicantName;
@@ -84,6 +85,7 @@ class ApplicationModel {
   ApplicationModel({
     required this.id,
     required this.offerId,
+    this.contractId,
     this.offerTitle,
     this.applicantId,
     this.applicantName,
@@ -98,6 +100,7 @@ class ApplicationModel {
     return ApplicationModel(
       id: (json['id'] ?? '').toString(),
       offerId: (json['offerId'] ?? json['offer_id'] ?? '').toString(),
+      contractId: (json['contractId'] ?? json['contract_id'] ?? json['contract']?['id'])?.toString(),
       offerTitle: json['offerTitle'] ?? json['offer']?['title'],
       applicantId: json['applicantId']?.toString(),
       applicantName: json['applicantName'] ?? json['applicant']?['name'],

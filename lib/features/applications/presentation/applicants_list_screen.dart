@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/application_model.dart';
@@ -64,10 +65,14 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('¡Ganador elegido! Se creó el contrato.')),
       );
-      // Regla de negocio #8: el API crea el contrato automáticamente.
-      // El módulo de contratos es propiedad de Persona 4. Si la respuesta
-      // trae `contractId`, navega así (ajusta la ruta a la que P4 defina):
-      // context.push('/contracts/${updatedApplication.contractId}');
+      final updatedApplication = provider.applicants.firstWhere(
+        (item) => item.id == application.id,
+        orElse: () => application,
+      );
+      final contractId = updatedApplication.contractId;
+      if (contractId != null && contractId.isNotEmpty && mounted) {
+        context.push('/contracts/$contractId');
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(provider.applicantsError ?? 'No se pudo elegir al ganador.')),
