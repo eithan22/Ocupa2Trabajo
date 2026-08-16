@@ -136,7 +136,7 @@ class _OfferDetailScreenState extends State<OfferDetailScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ApplyToOfferWidget(offerId: offer.id),
+            ApplyToOfferWidget(offerId: offer.id, questions: offer.questions),
 
             const SizedBox(height: 32),
           ],

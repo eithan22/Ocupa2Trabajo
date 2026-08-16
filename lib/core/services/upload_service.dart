@@ -21,10 +21,36 @@ class UploadService {
 
 
   Future<String> uploadImage(File imageFile) async {
+    return uploadImageBytes(
+      bytes: await imageFile.readAsBytes(),
+      filename: imageFile.path.split(Platform.pathSeparator).last,
+    );
+  }
+
+  /// Sube bytes de imagen para clientes multiplataforma como [XFile].
+  /// Valida las reglas de negocio del API antes de realizar la solicitud.
+  Future<String> uploadImageBytes({
+    required List<int> bytes,
+    required String filename,
+  }) async {
+    const maxBytes = 8 * 1024 * 1024;
+    const allowedExtensions = {'jpg', 'jpeg', 'png', 'webp', 'gif'};
+    final extension = filename.contains('.')
+        ? filename.split('.').last.toLowerCase()
+        : '';
+
+    if (bytes.isEmpty) {
+      throw ApiException('El archivo de imagen está vacío.');
+    }
+    if (bytes.length > maxBytes) {
+      throw ApiException('La imagen no puede superar los 8 MB.');
+    }
+    if (!allowedExtensions.contains(extension)) {
+      throw ApiException('Formato no permitido. Usa JPG, PNG, WEBP o GIF.');
+    }
+
     try {
-      final bytes = await imageFile.readAsBytes();
       final base64Image = base64Encode(bytes);
-      final filename = imageFile.path.split(Platform.pathSeparator).last;
 
       final response = await _dio.post(
         '/uploads',

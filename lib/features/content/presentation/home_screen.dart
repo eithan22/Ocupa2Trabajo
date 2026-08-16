@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
     _ModuleTile(icon: Icons.explore_outlined, label: 'Explorar ofertas', route: '/explore-offers'),
     _ModuleTile(icon: Icons.map_outlined, label: 'Mapa de ofertas', route: '/offers-map'),
     _ModuleTile(icon: Icons.campaign_outlined, label: 'Publicar oferta', route: '/publish-offer'),
-    _ModuleTile(icon: Icons.work_outline, label: 'Mis ofertas', route: null),
+    _ModuleTile(icon: Icons.work_outline, label: 'Mis ofertas', route: '/my-offers'),
     _ModuleTile(icon: Icons.assignment_outlined, label: 'Mis aplicaciones', route: '/my-applications'), 
     _ModuleTile(icon: Icons.badge_outlined, label: 'Mis experiencias', route: '/my-experiences'),       
     _ModuleTile(icon: Icons.description_outlined, label: 'Mis contratos', route: '/contracts'),

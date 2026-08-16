@@ -1,3 +1,5 @@
+import 'dynamic_field_model.dart';
+
 class OfferModel {
   final String id;
   final String title;
@@ -9,6 +11,7 @@ class OfferModel {
   final String? imageUrl;
   final String status;
   final String? contratante;
+  final List<DynamicFieldModel> questions;
 
   OfferModel({
     required this.id,
@@ -21,6 +24,7 @@ class OfferModel {
     this.imageUrl,
     required this.status,
     this.contratante,
+    this.questions = const [],
   });
 
   factory OfferModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,10 @@ class OfferModel {
       imageUrl: json['imageUrl'],
       status: json['status'] ?? 'active',
       contratante: json['contratante'],
+      questions: ((json['questions'] ?? json['customQuestions']) as List<dynamic>?)
+              ?.map((item) => DynamicFieldModel.fromJson(item as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
   }
 }

@@ -5,7 +5,7 @@ import 'explore_offers_screen.dart';
 import 'offers_map_screen.dart';
 import 'publish_offer_screen.dart';
 import 'offer_detail_screen.dart';
-// import 'my_offers_screen.dart'; // TODO: Descomentar cuando crees la pantalla de Tus Ofertas
+import 'my_offers_screen.dart';
 
 /// Rutas correspondientes al módulo de la Persona 2 (Catálogo y Ofertas)
 final List<RouteBase> offersRoutes = [
@@ -23,6 +23,10 @@ final List<RouteBase> offersRoutes = [
     builder: (context, state) => const PublishOfferScreen(),
   ),
   GoRoute(
+    path: '/my-offers',
+    builder: (context, state) => const MyOffersScreen(),
+  ),
+  GoRoute(
     // Recibe el ID de la oferta como parámetro dinámico
     path: '/offer-detail/:id',
     builder: (context, state) {
@@ -31,9 +35,4 @@ final List<RouteBase> offersRoutes = [
     },
   ),
 
-  // Aquí agregarás tu última pantalla cuando la termines:
-  // GoRoute(
-  //   path: '/my-offers',
-  //   builder: (context, state) => const MyOffersScreen(),
-  // ),
 ];

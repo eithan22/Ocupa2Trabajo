@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../core/services/upload_service.dart';
 import '../../../core/widgets/dynamic_form_field.dart';
 import '../../../models/job_type_model.dart';
 import '../providers/offers_provider.dart';
@@ -29,6 +31,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
 
   String? _uploadedImageUrl;
   String? _paymentId;
+  bool _uploadingImage = false;
 
   @override
   void initState() {
@@ -44,6 +47,31 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     _titleController.dispose();
     _descController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (picked == null || !mounted) return;
+
+    setState(() => _uploadingImage = true);
+    try {
+      final url = await UploadService().uploadImageBytes(
+        bytes: await picked.readAsBytes(),
+        filename: picked.name,
+      );
+      if (mounted) setState(() => _uploadedImageUrl = url);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingImage = false);
+    }
   }
 
   void _submitOffer() async {
@@ -178,13 +206,8 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                     const Text('Foto de la Oferta (Persona 5)'),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.upload),
-                      label: const Text('Simular subida de foto'),
-                      onPressed: () {
-                        // TODO: Llamar al UploadService de la Persona 5
-                        setState(() {
-                          _uploadedImageUrl = 'https://ejemplo.com/foto.jpg';
-                        });
-                      },
+                      label: Text(_uploadingImage ? 'Subiendo foto…' : 'Seleccionar foto'),
+                      onPressed: _uploadingImage ? null : _pickAndUploadImage,
                     ),
                     if (_uploadedImageUrl != null)
                       const Text('✅ Foto adjuntada', style: TextStyle(color: Colors.green)),
