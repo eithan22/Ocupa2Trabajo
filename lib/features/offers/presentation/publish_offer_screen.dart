@@ -23,6 +23,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
 
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
+  final _addressController = TextEditingController();
 
   String? _selectedJobTypeKey;
   String _selectedContractType = 'temporal';
@@ -45,6 +46,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
   void dispose() {
     _titleController.dispose();
     _descController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -95,6 +97,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     final offerData = {
       'title': _titleController.text.trim(),
       'description': _descController.text.trim(),
+      'address': _addressController.text.trim(),
       'jobTypeKey': _selectedJobTypeKey,
       'contractType': _selectedContractType,
       'imageUrl': _uploadedImageUrl,
@@ -165,6 +168,18 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                       ),
                       maxLines: 3,
                       validator: (v) => v!.isEmpty ? 'Requerido' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        labelText: 'Dirección / ubicación *',
+                        hintText: 'Ej. Santo Domingo, Distrito Nacional',
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'La dirección es obligatoria'
+                          : null,
                     ),
                     const SizedBox(height: 16),
 
