@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../models/offer_model.dart';
 import '../providers/offers_provider.dart';
 
@@ -25,6 +26,7 @@ class _MyOffersScreenState extends State<MyOffersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mis ofertas')),
+      drawer: const AppDrawer(),
       body: Consumer<OffersProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading && provider.myOffers.isEmpty) {

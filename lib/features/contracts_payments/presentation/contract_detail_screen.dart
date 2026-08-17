@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../models/contract_model.dart';
@@ -42,6 +43,7 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Detalle del contrato')),
+      drawer: const AppDrawer(),
       body: provider.isLoading && contract == null
           ? const LoadingView(message: 'Cargando contrato…')
           : provider.errorMessage != null && contract == null

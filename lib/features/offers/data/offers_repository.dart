@@ -54,8 +54,14 @@ class OffersRepository {
       }
 
       final response = await _dio.get('/offers', queryParameters: queryParams);
-      final data = response.data as List;
-      return data.map((e) => OfferModel.fromJson(e)).toList();
+      final data = _extractList(response.data);
+      if (data is! List) {
+        throw Exception('La respuesta de ofertas no tiene un formato válido');
+      }
+      return data
+          .whereType<Map>()
+          .map((e) => OfferModel.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
     } on DioException catch (e) {
       throw Exception(
         e.response?.data['message'] ?? 'Error al cargar las ofertas',
@@ -66,7 +72,10 @@ class OffersRepository {
   Future<OfferModel> getOfferDetail(String id) async {
     try {
       final response = await _dio.get('/offers/$id');
-      return OfferModel.fromJson(response.data);
+      final data = response.data is Map && response.data['data'] != null
+          ? response.data['data']
+          : response.data;
+      return OfferModel.fromJson(Map<String, dynamic>.from(data));
     } on DioException catch (e) {
       throw Exception(
         e.response?.data['message'] ??
@@ -78,8 +87,16 @@ class OffersRepository {
   Future<List<OfferModel>> getMyOffers() async {
     try {
       final response = await _dio.get('/me/offers');
-      final data = response.data as List;
-      return data.map((e) => OfferModel.fromJson(e)).toList();
+      final data = _extractList(response.data);
+      if (data is! List) {
+        throw Exception(
+          'La respuesta de tus ofertas no tiene un formato válido',
+        );
+      }
+      return data
+          .whereType<Map>()
+          .map((e) => OfferModel.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
     } on DioException catch (e) {
       throw Exception(
         e.response?.data['message'] ?? 'Error al cargar tus ofertas',
@@ -90,7 +107,10 @@ class OffersRepository {
   Future<OfferModel> createOffer(Map<String, dynamic> offerData) async {
     try {
       final response = await _dio.post('/offers', data: offerData);
-      return OfferModel.fromJson(response.data);
+      final data = response.data is Map && response.data['data'] != null
+          ? response.data['data']
+          : response.data;
+      return OfferModel.fromJson(Map<String, dynamic>.from(data));
     } on DioException catch (e) {
       throw Exception(
         e.response?.data['message'] ?? 'Error al publicar la oferta',

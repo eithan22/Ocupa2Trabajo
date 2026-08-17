@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../models/contract_model.dart';
@@ -51,6 +52,7 @@ class _ContractsListScreenState extends State<ContractsListScreen> {
           ),
         ],
       ),
+      drawer: const AppDrawer(),
       body: _buildBody(provider),
     );
   }

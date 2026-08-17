@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../models/experience_model.dart';
 import '../providers/applications_provider.dart';
 
@@ -41,7 +42,10 @@ class _ExperiencesScreenState extends State<ExperiencesScreen> {
         title: const Text('Eliminar experiencia'),
         content: Text('¿Eliminar "${experience.title}" de tu perfil?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
@@ -57,7 +61,9 @@ class _ExperiencesScreenState extends State<ExperiencesScreen> {
     if (!mounted) return;
     if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(provider.experiencesError ?? 'No se pudo eliminar.')),
+        SnackBar(
+          content: Text(provider.experiencesError ?? 'No se pudo eliminar.'),
+        ),
       );
     }
   }
@@ -66,6 +72,7 @@ class _ExperiencesScreenState extends State<ExperiencesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mis experiencias')),
+      drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openAddExperienceSheet,
         icon: const Icon(Icons.add),
@@ -85,9 +92,16 @@ class _ExperiencesScreenState extends State<ExperiencesScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
                       const SizedBox(height: 12),
-                      Text(provider.experiencesError ?? 'Error desconocido', textAlign: TextAlign.center),
+                      Text(
+                        provider.experiencesError ?? 'Error desconocido',
+                        textAlign: TextAlign.center,
+                      ),
                       const SizedBox(height: 12),
                       FilledButton(
                         onPressed: provider.loadMyExperiences,
@@ -165,7 +179,9 @@ class _ExperienceCard extends StatelessWidget {
                   placeholder: (_, __) => const SizedBox(
                     width: 56,
                     height: 56,
-                    child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
                   errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
                 ),
@@ -185,13 +201,26 @@ class _ExperienceCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(experience.title, style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    experience.title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   if (experience.company != null) Text(experience.company!),
                   if (_formatRange().isNotEmpty)
-                    Text(_formatRange(), style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                    Text(
+                      _formatRange(),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12,
+                      ),
+                    ),
                   if (experience.description != null) ...[
                     const SizedBox(height: 4),
-                    Text(experience.description!, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      experience.description!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ],
               ),
@@ -233,7 +262,10 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
   }
 
   Future<void> _pickCertificate() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 85);
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
     if (picked != null) {
       setState(() => _certificateFile = File(picked.path));
     }
@@ -263,9 +295,12 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
     final provider = context.read<ApplicationsProvider>();
     final success = await provider.addExperience(
       title: _titleController.text.trim(),
-      company: _companyController.text.trim().isEmpty ? null : _companyController.text.trim(),
-      description:
-          _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+      company: _companyController.text.trim().isEmpty
+          ? null
+          : _companyController.text.trim(),
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
       startDate: _startDate,
       endDate: _endDate,
       certificateFile: _certificateFile,
@@ -277,12 +312,15 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(provider.experiencesError ?? 'No se pudo guardar.')),
+        SnackBar(
+          content: Text(provider.experiencesError ?? 'No se pudo guardar.'),
+        ),
       );
     }
   }
 
-  String _fmt(DateTime? d) => d == null ? 'Sin definir' : '${d.day}/${d.month}/${d.year}';
+  String _fmt(DateTime? d) =>
+      d == null ? 'Sin definir' : '${d.day}/${d.month}/${d.year}';
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +337,10 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Nueva experiencia', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                'Nueva experiencia',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: _pickCertificate,
@@ -313,15 +354,24 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
                   child: _certificateFile != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.file(_certificateFile!, fit: BoxFit.cover),
+                          child: Image.file(
+                            _certificateFile!,
+                            fit: BoxFit.cover,
+                          ),
                         )
                       : const Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.add_a_photo_outlined, color: Colors.grey),
+                              Icon(
+                                Icons.add_a_photo_outlined,
+                                color: Colors.grey,
+                              ),
                               SizedBox(height: 4),
-                              Text('Agregar certificado (opcional)', style: TextStyle(color: Colors.grey)),
+                              Text(
+                                'Agregar certificado (opcional)',
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ],
                           ),
                         ),
@@ -330,20 +380,30 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Título / puesto', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+                decoration: const InputDecoration(
+                  labelText: 'Título / puesto',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Requerido' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _companyController,
-                decoration: const InputDecoration(labelText: 'Empresa / institución', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Empresa / institución',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _descriptionController,
                 minLines: 2,
                 maxLines: 4,
-                decoration: const InputDecoration(labelText: 'Descripción', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               Row(
@@ -368,7 +428,13 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
                 onPressed: _saving ? null : _save,
                 child: _saving
                     ? const SizedBox(
-                        height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : const Text('Guardar experiencia'),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../models/application_model.dart';
 import '../providers/applications_provider.dart';
 
@@ -26,6 +27,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mis aplicaciones')),
+      drawer: const AppDrawer(),
       body: Consumer<ApplicationsProvider>(
         builder: (context, provider, _) {
           switch (provider.myApplicationsStatus) {

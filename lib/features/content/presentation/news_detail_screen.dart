@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../models/news_item_model.dart';
 
 class NewsDetailScreen extends StatelessWidget {
@@ -12,6 +13,7 @@ class NewsDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Noticia')),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,14 +34,20 @@ class NewsDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.title, style: Theme.of(context).textTheme.headlineSmall),
+                  Text(
+                    item.title,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     '${DateFormat('d MMMM y', 'es').format(item.date)} · ${item.source}',
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                   const SizedBox(height: 16),
-                  Text(item.summary, style: Theme.of(context).textTheme.bodyLarge),
+                  Text(
+                    item.summary,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ],
               ),
             ),

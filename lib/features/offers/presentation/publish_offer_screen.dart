@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/services/upload_service.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../../../core/widgets/dynamic_form_field.dart';
 import '../../../models/job_type_model.dart';
 import '../providers/offers_provider.dart';
@@ -121,6 +122,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Publicar Oferta')),
+      drawer: const AppDrawer(),
       body: provider.isLoading && provider.jobTypes.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : provider.jobTypes.isEmpty && provider.errorMessage != null

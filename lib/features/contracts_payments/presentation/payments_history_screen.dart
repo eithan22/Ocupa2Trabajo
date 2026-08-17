@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../models/payment_model.dart';
@@ -28,6 +29,7 @@ class _PaymentsHistoryScreenState extends State<PaymentsHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Mis pagos')),
+      drawer: const AppDrawer(),
       body: _buildBody(provider),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../../../models/application_model.dart';
 import '../providers/applications_provider.dart';
 
@@ -36,7 +37,9 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ApplicationsProvider>().loadApplicantsForOffer(widget.offerId);
+      context.read<ApplicationsProvider>().loadApplicantsForOffer(
+        widget.offerId,
+      );
     });
   }
 
@@ -50,8 +53,14 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
           'como ganador? Esto crea el contrato automáticamente y no se puede deshacer.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Confirmar')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Confirmar'),
+          ),
         ],
       ),
     );
@@ -75,7 +84,11 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(provider.applicantsError ?? 'No se pudo elegir al ganador.')),
+        SnackBar(
+          content: Text(
+            provider.applicantsError ?? 'No se pudo elegir al ganador.',
+          ),
+        ),
       );
     }
   }
@@ -83,10 +96,14 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
   Future<void> _rate(ApplicationModel application) async {
     final rating = await showDialog<int>(
       context: context,
-      builder: (context) => _RatingDialog(initialRating: application.rating ?? 0),
+      builder: (context) =>
+          _RatingDialog(initialRating: application.rating ?? 0),
     );
     if (rating == null || !mounted) return;
-    await context.read<ApplicationsProvider>().rateApplicant(application.id, rating);
+    await context.read<ApplicationsProvider>().rateApplicant(
+      application.id,
+      rating,
+    );
   }
 
   Future<void> _discard(ApplicationModel application) async {
@@ -94,13 +111,16 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
   }
 
   Future<void> _markFinalist(ApplicationModel application) async {
-    await context.read<ApplicationsProvider>().markApplicantAsFinalist(application.id);
+    await context.read<ApplicationsProvider>().markApplicantAsFinalist(
+      application.id,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.offerTitle ?? 'Aplicantes')),
+      drawer: const AppDrawer(),
       body: Consumer<ApplicationsProvider>(
         builder: (context, provider, _) {
           switch (provider.applicantsStatus) {
@@ -115,12 +135,20 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
                       const SizedBox(height: 12),
-                      Text(provider.applicantsError ?? 'Error desconocido', textAlign: TextAlign.center),
+                      Text(
+                        provider.applicantsError ?? 'Error desconocido',
+                        textAlign: TextAlign.center,
+                      ),
                       const SizedBox(height: 12),
                       FilledButton(
-                        onPressed: () => provider.loadApplicantsForOffer(widget.offerId),
+                        onPressed: () =>
+                            provider.loadApplicantsForOffer(widget.offerId),
                         child: const Text('Reintentar'),
                       ),
                     ],
@@ -130,11 +158,16 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
 
             case LoadStatus.success:
               if (provider.applicants.isEmpty) {
-                return const Center(child: Text('Todavía no hay aplicantes para esta oferta.'));
+                return const Center(
+                  child: Text('Todavía no hay aplicantes para esta oferta.'),
+                );
               }
-              final hasWinner = provider.applicants.any((a) => a.status == ApplicationStatus.winner);
+              final hasWinner = provider.applicants.any(
+                (a) => a.status == ApplicationStatus.winner,
+              );
               return RefreshIndicator(
-                onRefresh: () => provider.loadApplicantsForOffer(widget.offerId),
+                onRefresh: () =>
+                    provider.loadApplicantsForOffer(widget.offerId),
                 child: ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: provider.applicants.length,
@@ -147,7 +180,8 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
                       onRate: () => _rate(application),
                       onDiscard: () => _discard(application),
                       onFinalist: () => _markFinalist(application),
-                      onChooseWinner: () => _confirmAndChooseWinner(application),
+                      onChooseWinner: () =>
+                          _confirmAndChooseWinner(application),
                     );
                   },
                 ),
@@ -204,7 +238,10 @@ class _ApplicantCard extends StatelessWidget {
                         application.applicantName ?? 'Aplicante',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      Text(application.status.label, style: TextStyle(color: Colors.grey.shade600)),
+                      Text(
+                        application.status.label,
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
                     ],
                   ),
                 ),
@@ -245,17 +282,23 @@ class _ApplicantCard extends StatelessWidget {
                     label: const Text('Calificar'),
                   ),
                   OutlinedButton.icon(
-                    onPressed: (disableActions || isDiscarded) ? null : onDiscard,
+                    onPressed: (disableActions || isDiscarded)
+                        ? null
+                        : onDiscard,
                     icon: const Icon(Icons.close, size: 18),
                     label: const Text('Descartar'),
                   ),
                   OutlinedButton.icon(
-                    onPressed: (disableActions || isDiscarded) ? null : onFinalist,
+                    onPressed: (disableActions || isDiscarded)
+                        ? null
+                        : onFinalist,
                     icon: const Icon(Icons.flag_outlined, size: 18),
                     label: const Text('Finalista'),
                   ),
                   FilledButton.icon(
-                    onPressed: (disableActions || isDiscarded) ? null : onChooseWinner,
+                    onPressed: (disableActions || isDiscarded)
+                        ? null
+                        : onChooseWinner,
                     icon: const Icon(Icons.emoji_events_outlined, size: 18),
                     label: const Text('Elegir ganador'),
                   ),
@@ -267,7 +310,10 @@ class _ApplicantCard extends StatelessWidget {
                 children: [
                   Icon(Icons.emoji_events, color: Colors.green),
                   SizedBox(width: 6),
-                  Text('Ganador — contrato creado', style: TextStyle(color: Colors.green)),
+                  Text(
+                    'Ganador — contrato creado',
+                    style: TextStyle(color: Colors.green),
+                  ),
                 ],
               ),
             ],
@@ -307,7 +353,10 @@ class _RatingDialogState extends State<_RatingDialog> {
         }),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _rating),
           child: const Text('Guardar'),

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../data/liked_offer_model.dart';
 import '../providers/applications_provider.dart';
 
@@ -29,6 +30,7 @@ class _LikedOffersScreenState extends State<LikedOffersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Me gusta')),
+      drawer: const AppDrawer(),
       body: Consumer<ApplicationsProvider>(
         builder: (context, provider, _) {
           switch (provider.likedOffersStatus) {
@@ -43,9 +45,16 @@ class _LikedOffersScreenState extends State<LikedOffersScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
                       const SizedBox(height: 12),
-                      Text(provider.likedOffersError ?? 'Error desconocido', textAlign: TextAlign.center),
+                      Text(
+                        provider.likedOffersError ?? 'Error desconocido',
+                        textAlign: TextAlign.center,
+                      ),
                       const SizedBox(height: 12),
                       FilledButton(
                         onPressed: provider.loadMyLikedOffers,
@@ -106,7 +115,8 @@ class _LikedOfferCard extends StatelessWidget {
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => const Icon(Icons.image_not_supported),
+                  errorWidget: (_, __, ___) =>
+                      const Icon(Icons.image_not_supported),
                 )
               : Container(
                   width: 56,
@@ -141,7 +151,10 @@ class LikeButton extends StatelessWidget {
     final provider = context.watch<ApplicationsProvider>();
     final liked = provider.isOfferLiked(offerId);
     return IconButton(
-      icon: Icon(liked ? Icons.favorite : Icons.favorite_border, color: liked ? Colors.red : null),
+      icon: Icon(
+        liked ? Icons.favorite : Icons.favorite_border,
+        color: liked ? Colors.red : null,
+      ),
       onPressed: () => context.read<ApplicationsProvider>().toggleLike(offerId),
     );
   }

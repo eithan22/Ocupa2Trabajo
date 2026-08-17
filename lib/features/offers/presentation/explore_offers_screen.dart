@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/offers_provider.dart';
 import '../../../models/offer_model.dart';
+import '../../../core/widgets/app_drawer.dart';
 
 class ExploreOffersScreen extends StatefulWidget {
   const ExploreOffersScreen({super.key});
@@ -28,7 +29,9 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
 
   void _onFilterChanged(String? jobTypeKey) {
     setState(() {
-      _selectedJobTypeKey = _selectedJobTypeKey == jobTypeKey ? null : jobTypeKey;
+      _selectedJobTypeKey = _selectedJobTypeKey == jobTypeKey
+          ? null
+          : jobTypeKey;
     });
 
     context.read<OffersProvider>().fetchOffers(jobTypeKey: _selectedJobTypeKey);
@@ -49,6 +52,7 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
           ),
         ],
       ),
+      drawer: const AppDrawer(),
       body: Column(
         children: [
           // FILTROS VISUALES
@@ -82,16 +86,17 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
                 : provider.offers.isEmpty
                 ? const Center(child: Text('No hay ofertas disponibles.'))
                 : RefreshIndicator(
-              onRefresh: () => provider.fetchOffers(jobTypeKey: _selectedJobTypeKey),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: provider.offers.length,
-                itemBuilder: (context, index) {
-                  final offer = provider.offers[index];
-                  return _OfferCard(offer: offer);
-                },
-              ),
-            ),
+                    onRefresh: () =>
+                        provider.fetchOffers(jobTypeKey: _selectedJobTypeKey),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: provider.offers.length,
+                      itemBuilder: (context, index) {
+                        final offer = provider.offers[index];
+                        return _OfferCard(offer: offer);
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -104,7 +109,6 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
   }
 }
 
-
 class _OfferCard extends StatelessWidget {
   final OfferModel offer;
 
@@ -116,27 +120,39 @@ class _OfferCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16.0),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text(offer.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          offer.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            Text(offer.description, maxLines: 2, overflow: TextOverflow.ellipsis),
+            Text(
+              offer.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
             const SizedBox(height: 8),
             Row(
               children: [
                 Chip(
-                  label: Text(offer.contractType.toUpperCase(), style: const TextStyle(fontSize: 10)),
+                  label: Text(
+                    offer.contractType.toUpperCase(),
+                    style: const TextStyle(fontSize: 10),
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
                 const Spacer(),
-                const Text('Ver detalle →', style: TextStyle(color: Colors.blue)),
+                const Text(
+                  'Ver detalle →',
+                  style: TextStyle(color: Colors.blue),
+                ),
               ],
             ),
           ],
         ),
         onTap: () {
-
           context.push('/offer-detail/${offer.id}');
         },
       ),

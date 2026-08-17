@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/widgets/app_drawer.dart';
 import '../providers/offers_provider.dart';
 
 class OffersMapScreen extends StatelessWidget {
@@ -11,25 +12,22 @@ class OffersMapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final provider = context.watch<OffersProvider>();
 
-
-    final mapOffers = provider.offers.where((o) => o.latitude != null && o.longitude != null).toList();
+    final mapOffers = provider.offers
+        .where((o) => o.latitude != null && o.longitude != null)
+        .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mapa de Ofertas'),
-      ),
+      appBar: AppBar(title: const Text('Mapa de Ofertas')),
+      drawer: const AppDrawer(),
       body: FlutterMap(
         options: MapOptions(
-
           initialCenter: const LatLng(18.4861, -69.9312),
           initialZoom: 12.0,
         ),
         children: [
           TileLayer(
-
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.itla.ocupa2',
           ),
@@ -41,7 +39,6 @@ class OffersMapScreen extends StatelessWidget {
                 height: 40,
                 child: GestureDetector(
                   onTap: () {
-
                     _showOfferBottomSheet(context, offer);
                   },
                   child: const Icon(
@@ -70,9 +67,16 @@ class OffersMapScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(offer.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              offer.title,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
-            Text(offer.description, maxLines: 3, overflow: TextOverflow.ellipsis),
+            Text(
+              offer.description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
