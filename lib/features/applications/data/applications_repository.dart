@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_client.dart';
@@ -8,7 +7,6 @@ import '../../../core/services/upload_service.dart';
 import '../../../models/application_model.dart';
 import '../../../models/dynamic_field_model.dart';
 import '../../../models/experience_model.dart';
-import 'liked_offer_model.dart';
 
 /// Capa de datos del módulo "Aplicaciones y Experiencias" (Persona 3).
 ///
@@ -18,8 +16,6 @@ import 'liked_offer_model.dart';
 ///  - /offers/{id}/applications (GET)
 ///  - /me/applications       (GET)
 ///  - /applications/{id}     (PATCH)
-///  - /offers/{id}/like      (POST, DELETE)
-///  - /me/likes              (GET)
 class ApplicationsRepository {
   final Dio _dio = DioClient.instance.dio;
   final UploadService _uploadService = UploadService();
@@ -31,12 +27,7 @@ class ApplicationsRepository {
   Future<List<ExperienceModel>> getMyExperiences() async {
     try {
       final response = await _dio.get('/me/experiences');
-      final data = response.data;
-      final list = data is List
-          ? data
-          : data is Map
-          ? (data['data'] ?? data['experiences'] ?? [])
-          : [];
+      final list = _extractList(response.data);
       return list
           .whereType<Map>()
           .map((e) => ExperienceModel.fromJson(Map<String, dynamic>.from(e)))
@@ -55,12 +46,15 @@ class ApplicationsRepository {
     String? description,
     DateTime? startDate,
     DateTime? endDate,
-    File? certificateFile,
+    XFile? certificateFile,
   }) async {
     try {
       String? certificateUrl;
       if (certificateFile != null) {
-        certificateUrl = await _uploadService.uploadImage(certificateFile);
+        certificateUrl = await _uploadService.uploadImageBytes(
+          bytes: await certificateFile.readAsBytes(),
+          filename: certificateFile.name,
+        );
       }
 
       final response = await _dio.post(
@@ -85,10 +79,38 @@ class ApplicationsRepository {
   }
 
   dynamic _unwrapData(dynamic responseData) {
-    if (responseData is Map && responseData['data'] != null) {
-      return responseData['data'];
+    var current = responseData;
+    while (current is Map && current['data'] != null) {
+      current = current['data'];
     }
-    return responseData;
+    if (current is Map && current['experience'] != null) {
+      return current['experience'];
+    }
+    return current;
+  }
+
+  List<dynamic> _extractList(dynamic responseData) {
+    var current = responseData;
+    while (current is Map) {
+      if (current['data'] != null) {
+        current = current['data'];
+        continue;
+      }
+      if (current['experiences'] != null) {
+        current = current['experiences'];
+        continue;
+      }
+      if (current['items'] != null) {
+        current = current['items'];
+        continue;
+      }
+      if (current['results'] != null) {
+        current = current['results'];
+        continue;
+      }
+      break;
+    }
+    return current is List ? current : const <dynamic>[];
   }
 
   Future<void> deleteExperience(String experienceId) async {
@@ -195,39 +217,6 @@ class ApplicationsRepository {
         data: body,
       );
       return ApplicationModel.fromJson(response.data);
-    } on DioException catch (e) {
-      throw ApiException.fromDioException(e);
-    }
-  }
-
-  // ---------------------------------------------------------------------
-  // Me gusta
-  // ---------------------------------------------------------------------
-
-  Future<void> likeOffer(String offerId) async {
-    try {
-      await _dio.post('/offers/$offerId/like');
-    } on DioException catch (e) {
-      throw ApiException.fromDioException(e);
-    }
-  }
-
-  Future<void> unlikeOffer(String offerId) async {
-    try {
-      await _dio.delete('/offers/$offerId/like');
-    } on DioException catch (e) {
-      throw ApiException.fromDioException(e);
-    }
-  }
-
-  Future<List<LikedOfferModel>> getMyLikedOffers() async {
-    try {
-      final response = await _dio.get('/me/likes');
-      final data = response.data;
-      final list = data is List ? data : (data['data'] ?? data['offers'] ?? []);
-      return List<LikedOfferModel>.from(
-        list.map((o) => LikedOfferModel.fromJson(o)),
-      );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

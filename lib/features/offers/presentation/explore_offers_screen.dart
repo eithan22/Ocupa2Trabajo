@@ -15,6 +15,7 @@ class ExploreOffersScreen extends StatefulWidget {
 
 class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
   String? _selectedJobTypeKey;
+  String? _selectedContractType;
 
   @override
   void initState() {
@@ -34,7 +35,24 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
           : jobTypeKey;
     });
 
-    context.read<OffersProvider>().fetchOffers(jobTypeKey: _selectedJobTypeKey);
+    _reloadOffers();
+  }
+
+  void _onContractTypeChanged(String? contractType) {
+    setState(() {
+      _selectedContractType = _selectedContractType == contractType
+          ? null
+          : contractType;
+    });
+
+    _reloadOffers();
+  }
+
+  void _reloadOffers() {
+    context.read<OffersProvider>().fetchOffers(
+      jobTypeKey: _selectedJobTypeKey,
+      contractType: _selectedContractType,
+    );
   }
 
   @override
@@ -58,24 +76,48 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
           // FILTROS VISUALES
           if (provider.jobTypes.isNotEmpty)
             Container(
-              height: 60,
+              height: 116,
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                itemCount: provider.jobTypes.length,
-                itemBuilder: (context, index) {
-                  final jobType = provider.jobTypes[index];
-                  final isSelected = _selectedJobTypeKey == jobType.key;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: FilterChip(
-                      label: Text(jobType.name),
-                      selected: isSelected,
-                      onSelected: (_) => _onFilterChanged(jobType.key),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      itemCount: provider.jobTypes.length,
+                      itemBuilder: (context, index) {
+                        final jobType = provider.jobTypes[index];
+                        final isSelected = _selectedJobTypeKey == jobType.key;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: FilterChip(
+                            label: Text(jobType.name),
+                            selected: isSelected,
+                            onSelected: (_) => _onFilterChanged(jobType.key),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                  SizedBox(
+                    height: 48,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(right: 8, top: 8),
+                          child: Text('Contrato:'),
+                        ),
+                        _contractTypeChip('Todos', null),
+                        _contractTypeChip('Temporal', 'temporal'),
+                        _contractTypeChip('Fijo', 'fijo'),
+                        _contractTypeChip('Por horas', 'horas'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -86,8 +128,10 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
                 : provider.offers.isEmpty
                 ? const Center(child: Text('No hay ofertas disponibles.'))
                 : RefreshIndicator(
-                    onRefresh: () =>
-                        provider.fetchOffers(jobTypeKey: _selectedJobTypeKey),
+                    onRefresh: () => provider.fetchOffers(
+                      jobTypeKey: _selectedJobTypeKey,
+                      contractType: _selectedContractType,
+                    ),
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16.0),
                       itemCount: provider.offers.length,
@@ -104,6 +148,17 @@ class _ExploreOffersScreenState extends State<ExploreOffersScreen> {
         onPressed: () => context.push('/publish-offer'),
         tooltip: 'Publicar Oferta',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _contractTypeChip(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: FilterChip(
+        label: Text(label),
+        selected: _selectedContractType == value,
+        onSelected: (_) => _onContractTypeChanged(value),
       ),
     );
   }
@@ -134,6 +189,12 @@ class _OfferCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 8),
+            if (offer.salary != null)
+              Text(
+                'Pago: ${offer.salary!.toStringAsFixed(2)} DOP',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            if (offer.salary != null) const SizedBox(height: 8),
             Row(
               children: [
                 Chip(

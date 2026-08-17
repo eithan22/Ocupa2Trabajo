@@ -41,13 +41,27 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Foro'),
               onTap: () => _goTo(context, '/forum'),
             ),
-
+            const Divider(),
             ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('Acerca de'),
-              onTap: () => _goTo(context, '/about'),
+              leading: const Icon(Icons.explore_outlined),
+              title: const Text('Explorar ofertas'),
+              onTap: () => _goTo(context, '/explore-offers'),
             ),
-            // 👤 Persona 3 — módulo Aplicaciones & Experiencias
+            ListTile(
+              leading: const Icon(Icons.map_outlined),
+              title: const Text('Mapa de ofertas'),
+              onTap: () => _goTo(context, '/offers-map'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.campaign_outlined),
+              title: const Text('Publicar oferta'),
+              onTap: () => _goTo(context, '/publish-offer'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.work_outline),
+              title: const Text('Mis ofertas'),
+              onTap: () => _goTo(context, '/my-offers'),
+            ),
             ListTile(
               leading: const Icon(Icons.assignment_outlined),
               title: const Text('Mis aplicaciones'),
@@ -59,16 +73,6 @@ class AppDrawer extends StatelessWidget {
               onTap: () => _goTo(context, '/my-experiences'),
             ),
             ListTile(
-              leading: const Icon(Icons.favorite_border),
-              title: const Text('Me gusta'),
-              onTap: () => _goTo(context, '/liked-offers'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.work_outline),
-              title: const Text('Mis ofertas'),
-              onTap: () => _goTo(context, '/my-offers'),
-            ),
-            ListTile(
               leading: const Icon(Icons.description_outlined),
               title: const Text('Mis contratos'),
               onTap: () => _goTo(context, '/contracts'),
@@ -78,8 +82,12 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Mis pagos'),
               onTap: () => _goTo(context, '/payments'),
             ),
-            // Cada módulo agrega su propia entrada aquí cuando su ruta exista.
             const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('Acerca de'),
+              onTap: () => _goTo(context, '/about'),
+            ),
             ListTile(
               leading: const Icon(Icons.lock_outline),
               title: const Text('Cambiar contraseña'),

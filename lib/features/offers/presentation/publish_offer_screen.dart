@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +10,6 @@ import '../../../core/widgets/dynamic_form_field.dart';
 import '../../../models/job_type_model.dart';
 import '../providers/offers_provider.dart';
 import '../../contracts_payments/presentation/payment_form_widget.dart';
-// import '../../../core/services/upload_service.dart'; // Componente de la Persona 5
 
 class PublishOfferScreen extends StatefulWidget {
   const PublishOfferScreen({super.key});
@@ -24,12 +24,14 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _addressController = TextEditingController();
+  final _salaryController = TextEditingController();
 
   String? _selectedJobTypeKey;
   String _selectedContractType = 'temporal';
   final Map<String, dynamic> _dynamicAnswers = {};
 
   String? _uploadedImageUrl;
+  Uint8List? _imagePreviewBytes;
   String? _paymentId;
   bool _uploadingImage = false;
 
@@ -47,6 +49,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     _titleController.dispose();
     _descController.dispose();
     _addressController.dispose();
+    _salaryController.dispose();
     super.dispose();
   }
 
@@ -57,10 +60,15 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     );
     if (picked == null || !mounted) return;
 
-    setState(() => _uploadingImage = true);
+    final bytes = await picked.readAsBytes();
+    setState(() {
+      _uploadingImage = true;
+      _imagePreviewBytes = bytes;
+      _uploadedImageUrl = null;
+    });
     try {
       final url = await UploadService().uploadImageBytes(
-        bytes: await picked.readAsBytes(),
+        bytes: bytes,
         filename: picked.name,
       );
       if (mounted) setState(() => _uploadedImageUrl = url);
@@ -92,6 +100,18 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
       return;
     }
 
+    final salary = double.tryParse(
+      _salaryController.text.trim().replaceAll(',', '.'),
+    );
+    if (salary == null || salary <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Indica un monto de pago válido para la oferta.'),
+        ),
+      );
+      return;
+    }
+
     final provider = context.read<OffersProvider>();
 
     final offerData = {
@@ -100,9 +120,10 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
       'address': _addressController.text.trim(),
       'jobTypeKey': _selectedJobTypeKey,
       'contractType': _selectedContractType,
-      'imageUrl': _uploadedImageUrl,
+      'photo': _uploadedImageUrl,
       'paymentId': _paymentId,
-      'customFields': _dynamicAnswers,
+      'payment': {'amount': salary, 'currency': 'DOP'},
+      'customAnswers': _dynamicAnswers,
     };
 
     final success = await provider.publishOffer(offerData);
@@ -183,6 +204,28 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                     ),
                     const SizedBox(height: 16),
 
+                    TextFormField(
+                      controller: _salaryController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      decoration: const InputDecoration(
+                        labelText: 'Monto de pago de la oferta *',
+                        hintText: 'Ej. 25000',
+                        prefixText: 'DOP ',
+                      ),
+                      validator: (value) {
+                        final amount = double.tryParse(
+                          (value ?? '').trim().replaceAll(',', '.'),
+                        );
+                        if (amount == null || amount <= 0) {
+                          return 'Indica un monto mayor que 0';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
                     // 3. Tipo de Contrato
                     DropdownButtonFormField<String>(
                       initialValue: _selectedContractType,
@@ -250,6 +293,18 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                       child: Column(
                         children: [
                           const Text('Foto de la oferta'),
+                          if (_imagePreviewBytes != null) ...[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.memory(
+                                _imagePreviewBytes!,
+                                height: 160,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                           ElevatedButton.icon(
                             icon: const Icon(Icons.upload),
                             label: Text(
@@ -277,7 +332,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                       color: Colors.blue.shade50,
                       child: Column(
                         children: [
-                          const Text('Pago de Publicación (Persona 4)'),
+                          const Text('Pago de publicación'),
                           const SizedBox(height: 12),
                           PaymentFormWidget(
                             onPaymentApproved: (paymentId) {
@@ -316,15 +371,41 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     );
 
     return selectedJobType.customFields.map((fieldConfig) {
+      final answerKey = _answerKeyFor(fieldConfig);
       return DynamicFormField(
         fieldConfig: fieldConfig,
-        initialValue: _dynamicAnswers[fieldConfig.name],
+        initialValue: _dynamicAnswers[answerKey],
         onChanged: (value) {
           setState(() {
-            _dynamicAnswers[fieldConfig.name] = value;
+            _dynamicAnswers[answerKey] = value;
           });
         },
       );
     }).toList();
+  }
+
+  String _answerKeyFor(CustomFieldModel fieldConfig) {
+    final configuredName = fieldConfig.name.trim();
+    if (configuredName.isNotEmpty) return configuredName;
+
+    final normalizedLabel = fieldConfig.label
+        .toLowerCase()
+        .replaceAll('á', 'a')
+        .replaceAll('é', 'e')
+        .replaceAll('í', 'i')
+        .replaceAll('ó', 'o')
+        .replaceAll('ú', 'u')
+        .replaceAll('ü', 'u')
+        .replaceAll('ñ', 'n')
+        .replaceAll(RegExp(r'[^a-z0-9áéíóúüñ]+'), '_')
+        .replaceAll(RegExp(r'_+'), '_')
+        .replaceAll(RegExp(r'^_|_$'), '');
+
+    if (normalizedLabel.contains('categoria') &&
+        normalizedLabel.contains('licencia')) {
+      return 'categoria_licencia';
+    }
+
+    return normalizedLabel.isEmpty ? 'respuesta' : normalizedLabel;
   }
 }

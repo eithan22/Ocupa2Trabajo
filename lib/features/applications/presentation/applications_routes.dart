@@ -2,7 +2,6 @@ import 'package:go_router/go_router.dart';
 
 import 'applicants_list_screen.dart';
 import 'experiences_screen.dart';
-import 'liked_offers_screen.dart';
 import 'my_applications_screen.dart';
 
 /// Rutas del módulo "Aplicaciones y Experiencias" — solo Persona 3 edita
@@ -34,9 +33,5 @@ final List<RouteBase> applicationsRoutes = [
   GoRoute(
     path: '/my-experiences',
     builder: (context, state) => const ExperiencesScreen(),
-  ),
-  GoRoute(
-    path: '/liked-offers',
-    builder: (context, state) => const LikedOffersScreen(),
   ),
 ];

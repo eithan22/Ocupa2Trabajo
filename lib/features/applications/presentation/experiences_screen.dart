@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -250,7 +250,8 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
   final _descriptionController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
-  File? _certificateFile;
+  XFile? _certificateFile;
+  Uint8List? _certificatePreviewBytes;
   bool _saving = false;
 
   @override
@@ -267,7 +268,12 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
       imageQuality: 85,
     );
     if (picked != null) {
-      setState(() => _certificateFile = File(picked.path));
+      final bytes = await picked.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _certificateFile = picked;
+        _certificatePreviewBytes = bytes;
+      });
     }
   }
 
@@ -354,8 +360,8 @@ class _AddExperienceSheetState extends State<_AddExperienceSheet> {
                   child: _certificateFile != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _certificateFile!,
+                          child: Image.memory(
+                            _certificatePreviewBytes!,
                             fit: BoxFit.cover,
                           ),
                         )

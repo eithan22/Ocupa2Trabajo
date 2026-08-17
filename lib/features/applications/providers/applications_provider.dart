@@ -1,27 +1,24 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../models/application_model.dart';
 import '../../../models/dynamic_field_model.dart';
 import '../../../models/experience_model.dart';
 import '../data/applications_repository.dart';
-import '../data/liked_offer_model.dart';
 
 enum LoadStatus { idle, loading, success, error }
 
 /// Estado del módulo "Aplicaciones y Experiencias".
 ///
-/// Un solo provider para las 3 responsabilidades de Persona 3 (aplicar,
-/// experiencias, me gusta) porque comparten el mismo repositorio y así
-/// evitamos que P2 tenga que envolver su árbol de widgets con 3 providers
-/// distintos al embeber `ApplyToOfferWidget` o un `LikeButton`.
+/// Un solo provider para aplicaciones y experiencias porque comparten el
+/// mismo repositorio y así evitamos providers adicionales al embeber
+/// `ApplyToOfferWidget`.
 class ApplicationsProvider extends ChangeNotifier {
   final ApplicationsRepository _repository;
 
   ApplicationsProvider({ApplicationsRepository? repository})
-      : _repository = repository ?? ApplicationsRepository();
+    : _repository = repository ?? ApplicationsRepository();
 
   // --- Mis aplicaciones ---
   LoadStatus myApplicationsStatus = LoadStatus.idle;
@@ -38,17 +35,9 @@ class ApplicationsProvider extends ChangeNotifier {
   List<ExperienceModel> experiences = [];
   String? experiencesError;
 
-  // --- Me gusta ---
-  LoadStatus likedOffersStatus = LoadStatus.idle;
-  List<LikedOfferModel> likedOffers = [];
-  String? likedOffersError;
-  final Set<String> _likedOfferIds = {};
-
   // --- Aplicar a una oferta ---
   bool isApplying = false;
   String? applyError;
-
-  bool isOfferLiked(String offerId) => _likedOfferIds.contains(offerId);
 
   // ---------------------------------------------------------------------
   // Mis aplicaciones
@@ -63,7 +52,9 @@ class ApplicationsProvider extends ChangeNotifier {
       myApplicationsStatus = LoadStatus.success;
     } catch (e) {
       myApplicationsStatus = LoadStatus.error;
-      myApplicationsError = e is ApiException ? e.message : 'Error al cargar tus aplicaciones.';
+      myApplicationsError = e is ApiException
+          ? e.message
+          : 'Error al cargar tus aplicaciones.';
     }
     notifyListeners();
   }
@@ -81,13 +72,19 @@ class ApplicationsProvider extends ChangeNotifier {
     applyError = null;
     notifyListeners();
     try {
-      await _repository.applyToOffer(offerId: offerId, comment: comment, answers: answers);
+      await _repository.applyToOffer(
+        offerId: offerId,
+        comment: comment,
+        answers: answers,
+      );
       isApplying = false;
       notifyListeners();
       return true;
     } catch (e) {
       isApplying = false;
-      applyError = e is ApiException ? e.message : 'No se pudo enviar tu aplicación.';
+      applyError = e is ApiException
+          ? e.message
+          : 'No se pudo enviar tu aplicación.';
       notifyListeners();
       return false;
     }
@@ -106,7 +103,9 @@ class ApplicationsProvider extends ChangeNotifier {
       applicantsStatus = LoadStatus.success;
     } catch (e) {
       applicantsStatus = LoadStatus.error;
-      applicantsError = e is ApiException ? e.message : 'Error al cargar los aplicantes.';
+      applicantsError = e is ApiException
+          ? e.message
+          : 'Error al cargar los aplicantes.';
     }
     notifyListeners();
   }
@@ -155,7 +154,9 @@ class ApplicationsProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      applicantsError = e is ApiException ? e.message : 'No se pudo actualizar el aplicante.';
+      applicantsError = e is ApiException
+          ? e.message
+          : 'No se pudo actualizar el aplicante.';
       notifyListeners();
       return false;
     }
@@ -174,7 +175,9 @@ class ApplicationsProvider extends ChangeNotifier {
       experiencesStatus = LoadStatus.success;
     } catch (e) {
       experiencesStatus = LoadStatus.error;
-      experiencesError = e is ApiException ? e.message : 'Error al cargar tus experiencias.';
+      experiencesError = e is ApiException
+          ? e.message
+          : 'Error al cargar tus experiencias.';
     }
     notifyListeners();
   }
@@ -185,7 +188,7 @@ class ApplicationsProvider extends ChangeNotifier {
     String? description,
     DateTime? startDate,
     DateTime? endDate,
-    File? certificateFile,
+    XFile? certificateFile,
   }) async {
     try {
       final created = await _repository.addExperience(
@@ -200,7 +203,9 @@ class ApplicationsProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      experiencesError = e is ApiException ? e.message : 'No se pudo agregar la experiencia.';
+      experiencesError = e is ApiException
+          ? e.message
+          : 'No se pudo agregar la experiencia.';
       notifyListeners();
       return false;
     }
@@ -213,61 +218,11 @@ class ApplicationsProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      experiencesError = e is ApiException ? e.message : 'No se pudo eliminar la experiencia.';
+      experiencesError = e is ApiException
+          ? e.message
+          : 'No se pudo eliminar la experiencia.';
       notifyListeners();
       return false;
     }
-  }
-
-  // ---------------------------------------------------------------------
-  // Me gusta
-  // ---------------------------------------------------------------------
-
-  Future<void> loadMyLikedOffers() async {
-    likedOffersStatus = LoadStatus.loading;
-    likedOffersError = null;
-    notifyListeners();
-    try {
-      likedOffers = await _repository.getMyLikedOffers();
-      _likedOfferIds
-        ..clear()
-        ..addAll(likedOffers.map((o) => o.id));
-      likedOffersStatus = LoadStatus.success;
-    } catch (e) {
-      likedOffersStatus = LoadStatus.error;
-      likedOffersError = e is ApiException ? e.message : 'Error al cargar tus ofertas con like.';
-    }
-    notifyListeners();
-  }
-
-  /// Alterna el like de una oferta. Pensado para ser usado tanto desde
-  /// `liked_offers_screen.dart` (P3) como desde tarjetas de oferta de P2
-  /// (`explore_offers_screen.dart`, `offer_detail_screen.dart`).
-  Future<void> toggleLike(String offerId) async {
-    final wasLiked = _likedOfferIds.contains(offerId);
-    // Actualización optimista para que el ícono responda de inmediato.
-    if (wasLiked) {
-      _likedOfferIds.remove(offerId);
-    } else {
-      _likedOfferIds.add(offerId);
-    }
-    notifyListeners();
-
-    try {
-      if (wasLiked) {
-        await _repository.unlikeOffer(offerId);
-        likedOffers = likedOffers.where((o) => o.id != offerId).toList();
-      } else {
-        await _repository.likeOffer(offerId);
-      }
-    } catch (e) {
-      // Revertir si el API falló.
-      if (wasLiked) {
-        _likedOfferIds.add(offerId);
-      } else {
-        _likedOfferIds.remove(offerId);
-      }
-    }
-    notifyListeners();
   }
 }
