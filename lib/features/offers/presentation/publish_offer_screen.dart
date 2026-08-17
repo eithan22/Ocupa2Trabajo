@@ -249,7 +249,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                       color: Colors.grey.shade200,
                       child: Column(
                         children: [
-                          const Text('Foto de la Oferta (Persona 5)'),
+                          const Text('Foto de la oferta'),
                           ElevatedButton.icon(
                             icon: const Icon(Icons.upload),
                             label: Text(
