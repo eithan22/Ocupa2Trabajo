@@ -92,6 +92,16 @@ class _OfferDetailScreenState extends State<OfferDetailScreen> {
                       ),
                     ],
                   ),
+                  if (offer.salary != null) ...[
+                    const SizedBox(height: 8),
+                    Chip(
+                      avatar: const Icon(Icons.payments_outlined, size: 18),
+                      label: Text(
+                        'Pago: ${offer.salary!.toStringAsFixed(2)} DOP',
+                      ),
+                      backgroundColor: Colors.green.shade100,
+                    ),
+                  ],
                   const SizedBox(height: 16),
 
                   Container(

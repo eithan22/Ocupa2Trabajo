@@ -7,8 +7,21 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/app_drawer.dart';
 import '../providers/offers_provider.dart';
 
-class OffersMapScreen extends StatelessWidget {
+class OffersMapScreen extends StatefulWidget {
   const OffersMapScreen({super.key});
+
+  @override
+  State<OffersMapScreen> createState() => _OffersMapScreenState();
+}
+
+class _OffersMapScreenState extends State<OffersMapScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<OffersProvider>().fetchOffers();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

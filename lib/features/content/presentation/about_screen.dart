@@ -45,7 +45,7 @@ class AboutScreen extends StatelessWidget {
       name: 'Luis A. Montero Alcántara',
       matricula: '2022-0782',
       role: 'Integrante del equipo',
-      phone: '', //
+      phone: '8094636109',
       telegram: 'Craquen52',
       photo: 'assets/images/Luis.jpg',
     ),
@@ -98,6 +98,8 @@ class AboutScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(member.role),
                   Text('Matrícula: ${member.matricula}'),
+                  Text('Teléfono: ${member.phone}'),
+                  Text('Telegram: @${member.telegram}'),
                 ],
               ),
               isThreeLine: true,

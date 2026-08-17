@@ -122,8 +122,21 @@ String? _nullableString(dynamic value) {
   return result.isEmpty ? null : result;
 }
 
-DateTime _dateFrom(dynamic value) =>
-    DateTime.tryParse(_asString(value)) ?? DateTime.now();
+DateTime _dateFrom(dynamic value) {
+  final raw = _asString(value).trim();
+  if (raw.isEmpty) return DateTime.now();
+
+  // Las fechas completas del API vienen en UTC. Las fechas sin zona horaria
+  // también se interpretan como UTC para evitar que el navegador muestre el
+  // día siguiente al convertirlas a la hora local de Santo Domingo.
+  final isDateOnly = RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(raw);
+  if (isDateOnly) return DateTime.tryParse(raw) ?? DateTime.now();
+
+  final hasTimezone =
+      raw.endsWith('Z') || RegExp(r'[+-]\d{2}:?\d{2}$').hasMatch(raw);
+  final parsed = DateTime.tryParse(hasTimezone ? raw : '${raw}Z');
+  return parsed?.toLocal() ?? DateTime.now();
+}
 
 int? _asInt(dynamic value) =>
     value is num ? value.toInt() : int.tryParse(_asString(value));
